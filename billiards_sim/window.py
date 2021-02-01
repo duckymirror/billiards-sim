@@ -49,13 +49,13 @@ class Ball(pygame.sprite.Sprite):
         self.color = color
 
     def draw(self, surface):
-        pygame.draw.circle(surface, self.color, (int(self.ball.pos[0] * SCALE), int(self.ball.pos[1] * SCALE)), int(self.ball.radius * SCALE))
+        pygame.draw.circle(surface, self.color, (int(self.ball.pos.x * SCALE), int(self.ball.pos.y * SCALE)), int(self.ball.radius * SCALE))
 
 def add_ball(ball):
     global balls
     balls.add(ball)
 
-def loop():
+def loop(world):
     table = Table()
     while True:
         for event in pygame.event.get():
@@ -63,6 +63,8 @@ def loop():
                 pygame.quit()
                 sys.exit()
         
+        world.tick()
+
         DISPLAYSURF.fill(BACKGROUND)
         table.draw(DISPLAYSURF)
         for ball in balls:
