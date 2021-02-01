@@ -3,6 +3,8 @@ from pygame.locals import *
 
 pygame.init()
 
+balls = pygame.sprite.Group()
+
 FPS = 30
 FramesPerSec = pygame.time.Clock()
 
@@ -40,6 +42,19 @@ class Table(pygame.sprite.Sprite):
     def draw(self, surface):
         surface.blit(self.surf, (0, 0))
 
+class Ball(pygame.sprite.Sprite):
+    def __init__(self, ball, color):
+        super().__init__()
+        self.ball = ball
+        self.color = color
+
+    def draw(self, surface):
+        pygame.draw.circle(surface, self.color, (int(self.ball.pos[0] * SCALE), int(self.ball.pos[1] * SCALE)), int(self.ball.radius * SCALE))
+
+def add_ball(ball):
+    global balls
+    balls.add(ball)
+
 def loop():
     table = Table()
     while True:
@@ -50,5 +65,7 @@ def loop():
         
         DISPLAYSURF.fill(BACKGROUND)
         table.draw(DISPLAYSURF)
+        for ball in balls:
+            ball.draw(DISPLAYSURF)
         pygame.display.update()
         FramesPerSec.tick(FPS)
