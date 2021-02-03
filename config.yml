@@ -32,9 +32,13 @@ balls:
     vel: [0, 0]
     col: [0, 0, 0]
 actions:
-  - ball: "ball_3"
-    vel: [0, 700]
-  - ball: "ball_3"
-    vel: [0, -1000]
+  - ball: "ball_1"
+    bump:
+      ball: "ball_3"
+      dest: [1270, 1270]
+      vel: 2000
   - ball: "ball_2"
-    vel: [-500, -500]
+    bump:
+      ball: "ball_1"
+      dest: [1250, 0]
+      vel: 800

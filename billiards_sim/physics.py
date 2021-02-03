@@ -173,11 +173,22 @@ class World:
         if len(self.actions) == 0:
             return
         action = self.actions.pop()
+        ball = self.get_ball(action.ball)
+        if action.vel is not None:
+            ball.vel = action.vel
+        else:
+            target_ball = self.get_ball(action.bump.ball)
+            desired_dir = (target_ball.pos - action.bump.dest).norm()
+            total_radius = ball.radius + target_ball.radius
+            target_point = target_ball.pos + desired_dir * total_radius
+            dir = (target_point - ball.pos).norm()
+            ball.vel = dir * action.bump.vel
+
+    def get_ball(self, name):
         try:
-            ball = next(filter(lambda b: b.name == action.ball, self.balls))
+            return next(filter(lambda b: b.name == name, self.balls))
         except StopIteration:
-            raise ValueError('Ball "{}" couldn\'t be found'.format(action.ball))
-        ball.vel = action.vel
+            raise ValueError('Ball "{}" couldn\'t be found'.format(name))
 
 
 class Ball:
@@ -203,6 +214,14 @@ class Pocket:
         self.right = side.endswith('right')
 
 class Action:
-    def __init__(self, ball, vel):
+    def __init__(self, ball, vel=None, bump=None):
+        assert(vel is not None or bump is not None)
         self.ball = ball
+        self.vel = vel
+        self.bump = bump
+
+class BumpActionData:
+    def __init__(self, ball, dest, vel):
+        self.ball = ball
+        self.dest = dest
         self.vel = vel
