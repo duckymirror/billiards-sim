@@ -30,13 +30,15 @@ def run():
     height = data.get(HEIGHT_KEY, 2540)
 
     pockets = []
+    ui_pockets = []
     if POCKETS_KEY in data:
         for pocket in data[POCKETS_KEY]:
             pocket = physics.Pocket(pocket[POCKET_SIDE_KEY], pocket[POCKET_DIAMETER_KEY], pocket.get(POCKET_POS_KEY, None))
-            pockets.append(window.Pocket(pocket))
+            pockets.append(pocket)
+            ui_pockets.append(window.Pocket(pocket))
 
-    window.init(width, height, pockets)
-    world = physics.World(width, height)
+    window.init(width, height, ui_pockets)
+    world = physics.World(width, height, pockets)
     if BALLS_KEY in data:
         for ball in data[BALLS_KEY]:
             pos = ball[POS_KEY]

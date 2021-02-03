@@ -53,10 +53,42 @@ class Vector:
 
 
 class World:
-    def __init__(self, width, height):
+    def __init__(self, width, height, pockets):
         self.balls = []
         self.width = width
         self.height = height
+        self.top_pockets = []
+        self.bottom_pockets = []
+        self.left_pockets = []
+        self.right_pockets = []
+        self.insert_pockets(pockets)
+
+    def insert_pockets(self, pockets):
+        for pocket in pockets:
+            if pocket.top:
+                if pocket.left:
+                    self.top_pockets.append([-math.inf, pocket.length])
+                    self.left_pockets.append([-math.inf, pocket.length])
+                elif pocket.right:
+                    self.top_pockets.append([self.width - pocket.length, math.inf])
+                    self.right_pockets.append([-math.inf, pocket.length])
+                else:
+                    self.top_pockets.append([pocket.pos - pocket.length / 2, pocket.pos + pocket.length / 2])
+            elif pocket.bottom:
+                if pocket.left:
+                    self.bottom_pockets.append([-math.inf, pocket.length])
+                    self.left_pockets.append([self.height - pocket.length, math.inf])
+                elif pocket.right:
+                    self.bottom_pockets.append([self.width - pocket.length, math.inf])
+                    self.right_pockets.append([self.height - pocket.length, math.inf])
+                else:
+                    self.bottom_pockets.append([pocket.pos - pocket.length / 2, pocket.pos + pocket.length / 2])
+            elif pocket.left:
+                self.left_pockets.append([pocket.pos - pocket.length / 2, pocket.pos + pocket.length / 2])
+            elif pocket.right:
+                self.right_pockets.append([pocket.pos - pocket.length / 2, pocket.pos + pocket.length / 2])
+            else:
+                raise ValueError()
 
     def add_ball(self, ball):
         self.balls.append(ball)
@@ -69,15 +101,39 @@ class World:
             self.handle_collision(collision[0], collision[1])
         for ball in self.balls:
             ball.pos += ball.vel / tps
+        self.balls = list(filter(lambda b: not b.removed, self.balls))
 
     def collide_border(self, ball):
-        # Left / right border
-        if ball.pos.x <= ball.radius or ball.pos.x >= self.width - ball.radius:
-            ball.vel.x = -ball.vel.x
+        # Left border
+        if ball.pos.x <= ball.radius:
+            if any(filter(lambda p: p[0] < ball.pos.y < p[1], self.left_pockets)):
+                if ball.pos.x <= 0:
+                    ball.removed = True
+            else:
+                ball.vel.x = -ball.vel.x
+        # Right border
+        if ball.pos.x >= self.width - ball.radius:
+            if any(filter(lambda p: p[0] < ball.pos.y < p[1], self.right_pockets)):
+                if ball.pos.x >= self.width:
+                    ball.removed = True
+            else:
+                ball.vel.x = -ball.vel.x
 
-        # Top / bottom border
-        if ball.pos.y <= ball.radius or ball.pos.y >= self.height - ball.radius:
-            ball.vel.y = -ball.vel.y
+        # Top border
+        if ball.pos.y <= ball.radius:
+            if any(filter(lambda p: p[0] < ball.pos.x < p[1], self.top_pockets)):
+                if ball.pos.y <= 0:
+                    ball.removed = True
+            else:
+                ball.vel.y = -ball.vel.y
+
+        # Bottom border
+        if ball.pos.y >= self.height - ball.radius:
+            if any(filter(lambda p: p[0] < ball.pos.x < p[1], self.bottom_pockets)):
+                if ball.pos.y >= self.height:
+                    ball.removed = True
+            else:
+                ball.vel.y = -ball.vel.y
 
     def get_ball_collisions(self):
         collisions = []
@@ -109,6 +165,7 @@ class Ball:
         self.radius = radius
         self.pos = pos
         self.vel = vel
+        self.removed = False
 
 class Pocket:
     def __init__(self, side, diameter, pos):

@@ -142,6 +142,8 @@ def loop(world, fps, tpf):
 
         DISPLAYSURF.fill(BACKGROUND)
         table.draw(DISPLAYSURF)
+        global balls
+        balls = list(filter(lambda b: not b.ball.removed, balls))
         for ball in balls:
             ball.draw(DISPLAYSURF)
         for pocket in all_pockets:
