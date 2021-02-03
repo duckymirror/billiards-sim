@@ -12,6 +12,10 @@ BALLS_KEY = 'balls'
 POS_KEY = 'pos'
 VEL_KEY = 'vel'
 COLOR_KEY = 'col'
+POCKETS_KEY = 'pockets'
+POCKET_SIDE_KEY = 'side'
+POCKET_POS_KEY = 'pos'
+POCKET_DIAMETER_KEY = 'diameter'
 
 def run():
     yaml_path = sys.argv[1]
@@ -25,7 +29,13 @@ def run():
     width = data.get(WIDTH_KEY, 1270)
     height = data.get(HEIGHT_KEY, 2540)
 
-    window.init(width, height)
+    pockets = []
+    if POCKETS_KEY in data:
+        for pocket in data[POCKETS_KEY]:
+            pocket = physics.Pocket(pocket[POCKET_SIDE_KEY], pocket[POCKET_DIAMETER_KEY], pocket.get(POCKET_POS_KEY, None))
+            pockets.append(window.Pocket(pocket))
+
+    window.init(width, height, pockets)
     world = physics.World(width, height)
     if BALLS_KEY in data:
         for ball in data[BALLS_KEY]:

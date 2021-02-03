@@ -4,25 +4,31 @@ from pygame.locals import *
 pygame.init()
 
 balls = pygame.sprite.Group()
+all_pockets = pygame.sprite.Group()
 
 FramesPerSec = pygame.time.Clock()
 
 WHITE = (255, 255, 255)
 BLUE = (25, 25, 205)
 BACKGROUND = (0x02, 0xC3, 0x7D)
+POCKET_COLOR = (0x97, 0x99, 0x9B)
 
 SCALE = 1.0 / 3
 BORDER_THICKNESS = 10
 
+DISPLAYSURF = None
+
 table_size = (None, None)
 
-def init(width, height):
+def init(width, height, pockets):
     global table_size
     table_size = (width, height)
     global DISPLAYSURF
     DISPLAYSURF = pygame.display.set_mode((int(width * SCALE + 2 * BORDER_THICKNESS), int(height * SCALE + 2 * BORDER_THICKNESS)))
     DISPLAYSURF.fill(BACKGROUND)
     pygame.display.set_caption("Billiards")
+    global all_pockets
+    all_pockets = pockets
 
 class Table(pygame.sprite.Sprite):
     def __init__(self):
@@ -40,6 +46,75 @@ class Table(pygame.sprite.Sprite):
 
     def draw(self, surface):
         surface.blit(self.surf, (0, 0))
+
+class Pocket(pygame.sprite.Sprite):
+    def __init__(self, pocket):
+        self.pocket = pocket
+    
+    def draw(self, surface):
+        if self.pocket.top and self.pocket.left:
+            x = 0
+            y = 0
+            width = BORDER_THICKNESS + self.pocket.length * SCALE
+            height = BORDER_THICKNESS
+            pygame.draw.rect(surface, POCKET_COLOR, (x, y, width, height))
+            width = BORDER_THICKNESS
+            height = BORDER_THICKNESS + self.pocket.length * SCALE
+            pygame.draw.rect(surface, POCKET_COLOR, (x, y, width, height))
+        elif self.pocket.top and self.pocket.right:
+            x = table_size[0] * SCALE + BORDER_THICKNESS - self.pocket.length * SCALE
+            y = 0
+            width = table_size[0] * SCALE + BORDER_THICKNESS
+            height = BORDER_THICKNESS
+            pygame.draw.rect(surface, POCKET_COLOR, (x, y, width, height))
+            x = table_size[0] * SCALE + BORDER_THICKNESS
+            height = BORDER_THICKNESS + self.pocket.length * SCALE
+            pygame.draw.rect(surface, POCKET_COLOR, (x, y, width, height))
+        elif self.pocket.top:
+            x = BORDER_THICKNESS + self.pocket.pos * SCALE - self.pocket.length / 2 * SCALE
+            y = 0
+            width = self.pocket.length * SCALE
+            height = BORDER_THICKNESS
+            pygame.draw.rect(surface, POCKET_COLOR, (x, y, width, height))
+        elif self.pocket.bottom and self.pocket.left:
+            x = 0
+            y = BORDER_THICKNESS + table_size[1] * SCALE
+            width = BORDER_THICKNESS + self.pocket.length * SCALE
+            height = BORDER_THICKNESS
+            pygame.draw.rect(surface, POCKET_COLOR, (x, y, width, height))
+            y = table_size[1] * SCALE + BORDER_THICKNESS - self.pocket.length * SCALE
+            width = BORDER_THICKNESS
+            height = self.pocket.length * SCALE + BORDER_THICKNESS
+            pygame.draw.rect(surface, POCKET_COLOR, (x, y, width, height))
+        elif self.pocket.bottom and self.pocket.right:
+            x = table_size[0] * SCALE + BORDER_THICKNESS - self.pocket.length * SCALE
+            y = table_size[1] * SCALE + BORDER_THICKNESS
+            width = self.pocket.length * SCALE + BORDER_THICKNESS
+            height = BORDER_THICKNESS
+            pygame.draw.rect(surface, POCKET_COLOR, (x, y, width, height))
+            x = table_size[0] * SCALE + BORDER_THICKNESS
+            y = table_size[1] * SCALE + BORDER_THICKNESS - self.pocket.length * SCALE
+            width = BORDER_THICKNESS
+            height = self.pocket.length * SCALE + BORDER_THICKNESS
+            pygame.draw.rect(surface, POCKET_COLOR, (x, y, width, height))
+        elif self.pocket.bottom:
+            x = BORDER_THICKNESS + self.pocket.pos * SCALE - self.pocket.length / 2 * SCALE
+            y = table_size[1] * SCALE + BORDER_THICKNESS
+            width = self.pocket.length * SCALE
+            height = BORDER_THICKNESS
+            pygame.draw.rect(surface, POCKET_COLOR, (x, y, width, height))
+        elif self.pocket.left:
+            x = 0
+            y = BORDER_THICKNESS + self.pocket.pos * SCALE - self.pocket.length / 2 * SCALE
+            width = BORDER_THICKNESS
+            height = self.pocket.length * SCALE
+            pygame.draw.rect(surface, POCKET_COLOR, (x, y, width, height))
+        elif self.pocket.right:
+            x = table_size[0] * SCALE + BORDER_THICKNESS
+            y = BORDER_THICKNESS + self.pocket.pos * SCALE - self.pocket.length / 2 * SCALE
+            width = BORDER_THICKNESS
+            height = self.pocket.length * SCALE
+            pygame.draw.rect(surface, POCKET_COLOR, (x, y, width, height))
 
 class Ball(pygame.sprite.Sprite):
     def __init__(self, ball, color):
@@ -69,5 +144,7 @@ def loop(world, fps, tpf):
         table.draw(DISPLAYSURF)
         for ball in balls:
             ball.draw(DISPLAYSURF)
+        for pocket in all_pockets:
+            pocket.draw(DISPLAYSURF)
         pygame.display.update()
         FramesPerSec.tick(fps)

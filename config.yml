@@ -2,6 +2,27 @@ fps: 60
 width: 1270
 height: 2540
 radius: 28.6
+pockets:
+  - side: top_left
+    diameter: 130
+  - side: top_right
+    diameter: 130
+  - side: top
+    diameter: 140
+    pos: 635
+  - side: bottom_left
+    diameter: 130
+  - side: bottom_right
+    diameter: 130
+  - side: bottom
+    diameter: 140
+    pos: 635
+  - side: left
+    diameter: 140
+    pos: 1270
+  - side: right
+    diameter: 140
+    pos: 1270
 balls:
   - pos: [300, 300]
     vel: [-1000, -1000]

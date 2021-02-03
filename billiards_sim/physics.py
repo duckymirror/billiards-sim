@@ -109,3 +109,17 @@ class Ball:
         self.radius = radius
         self.pos = pos
         self.vel = vel
+
+class Pocket:
+    def __init__(self, side, diameter, pos):
+        if side == 'top_left' or side == 'top_right' or side == 'bottom_left' or side == 'bottom_right':
+            assert(pos is None)
+            self.length = math.sqrt(diameter * diameter / 2)
+            self.pos = 0
+        else:
+            self.length = diameter
+            self.pos = pos
+        self.top = side.startswith('top')
+        self.bottom = side.startswith('bottom')
+        self.left = side.endswith('left')
+        self.right = side.endswith('right')
