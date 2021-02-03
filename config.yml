@@ -19,12 +19,22 @@ pockets:
     diameter: 140
     pos: 1270
 balls:
-  - pos: [300, 300]
-    vel: [-1000, -1000]
+  - name: "ball_1"
+    pos: [300, 300]
+    vel: [0, 00]
     col: [0xfc, 0xea, 0x23]
-  - pos: [600, 600]
-    vel: [-510, -500]
+  - name: "ball_2"
+    pos: [600, 600]
+    vel: [0, 0]
     col: [0xe4, 0x66, 0x15]
-  - pos: [600, 1300]
-    vel: [0, -700]
+  - name: "ball_3"
+    pos: [600, 1300]
+    vel: [0, 0]
     col: [0, 0, 0]
+actions:
+  - ball: "ball_3"
+    vel: [0, 700]
+  - ball: "ball_3"
+    vel: [0, -1000]
+  - ball: "ball_2"
+    vel: [-500, -500]

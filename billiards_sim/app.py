@@ -12,11 +12,15 @@ BALLS_KEY = 'balls'
 POS_KEY = 'pos'
 VEL_KEY = 'vel'
 COLOR_KEY = 'col'
+BALL_NAME_KEY = 'name'
 POCKETS_KEY = 'pockets'
 POCKET_SIDE_KEY = 'side'
 POCKET_POS_KEY = 'pos'
 POCKET_DIAMETER_KEY = 'diameter'
 FRICTION_KEY = 'friction'
+ACTIONS_KEY = 'actions'
+ACTIONS_BALL_KEY = 'ball'
+ACTIONS_VEL_KEY = 'vel'
 
 def run():
     yaml_path = sys.argv[1]
@@ -40,14 +44,22 @@ def run():
             pockets.append(pocket)
             ui_pockets.append(window.Pocket(pocket))
 
+    actions = []
+    if ACTIONS_KEY in data:
+        for action in data[ACTIONS_KEY]:
+            ball = str(action[ACTIONS_BALL_KEY])
+            vel = action[ACTIONS_VEL_KEY]
+            actions.append(physics.Action(ball, physics.Vector(vel[0], vel[1])))
+
     window.init(width, height, ui_pockets)
-    world = physics.World(width, height, pockets, friction)
+    world = physics.World(width, height, pockets, friction, actions)
     if BALLS_KEY in data:
         for ball in data[BALLS_KEY]:
             pos = ball[POS_KEY]
             vel = ball[VEL_KEY]
             color = ball[COLOR_KEY]
-            ph_ball = physics.Ball(ball_radius, physics.Point(pos[0], pos[1]), physics.Vector(vel[0], vel[1]))
+            name = ball.get(BALL_NAME_KEY, None)
+            ph_ball = physics.Ball(ball_radius, physics.Point(pos[0], pos[1]), physics.Vector(vel[0], vel[1]), name)
             world.add_ball(ph_ball)
             window.add_ball(window.Ball(ph_ball, (color[0], color[1], color[2])))
     window.loop(world, fps, tpf)

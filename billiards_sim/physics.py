@@ -53,7 +53,7 @@ class Vector:
 
 
 class World:
-    def __init__(self, width, height, pockets, friction):
+    def __init__(self, width, height, pockets, friction, actions):
         self.balls = []
         self.width = width
         self.height = height
@@ -63,6 +63,8 @@ class World:
         self.right_pockets = []
         self.insert_pockets(pockets)
         self.friction = friction
+        self.actions = actions
+        self.actions.reverse()
 
     def insert_pockets(self, pockets):
         for pocket in pockets:
@@ -100,11 +102,15 @@ class World:
         collisions = self.get_ball_collisions()
         for collision in collisions:
             self.handle_collision(collision[0], collision[1])
+        sleeping_count = 0
         for ball in self.balls:
             ball.pos += ball.vel / tps
             ball.vel -= ball.vel.almost_norm() * min(self.friction / tps, ball.vel.length())
             if ball.vel.length() < 0.0001:
                 ball.vel = Vector(0, 0)
+                sleeping_count += 1
+        if sleeping_count == len(self.balls):
+            self.next_action()
         self.balls = list(filter(lambda b: not b.removed, self.balls))
 
     def collide_border(self, ball):
@@ -163,12 +169,23 @@ class World:
         ball_1.vel = vel_1_new + ball_2.vel
         ball_2.vel = vel_2_new + ball_2.vel
 
+    def next_action(self):
+        if len(self.actions) == 0:
+            return
+        action = self.actions.pop()
+        try:
+            ball = next(filter(lambda b: b.name == action.ball, self.balls))
+        except StopIteration:
+            raise ValueError('Ball "{}" couldn\'t be found'.format(action.ball))
+        ball.vel = action.vel
+
 
 class Ball:
-    def __init__(self, radius, pos, vel):
+    def __init__(self, radius, pos, vel, name=None):
         self.radius = radius
         self.pos = pos
         self.vel = vel
+        self.name = name
         self.removed = False
 
 class Pocket:
@@ -184,3 +201,8 @@ class Pocket:
         self.bottom = side.startswith('bottom')
         self.left = side.endswith('left')
         self.right = side.endswith('right')
+
+class Action:
+    def __init__(self, ball, vel):
+        self.ball = ball
+        self.vel = vel
