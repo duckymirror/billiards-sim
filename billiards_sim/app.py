@@ -16,6 +16,7 @@ POCKETS_KEY = 'pockets'
 POCKET_SIDE_KEY = 'side'
 POCKET_POS_KEY = 'pos'
 POCKET_DIAMETER_KEY = 'diameter'
+FRICTION_KEY = 'friction'
 
 def run():
     yaml_path = sys.argv[1]
@@ -29,6 +30,8 @@ def run():
     width = data.get(WIDTH_KEY, 1270)
     height = data.get(HEIGHT_KEY, 2540)
 
+    friction = data.get(FRICTION_KEY, 0)
+
     pockets = []
     ui_pockets = []
     if POCKETS_KEY in data:
@@ -38,7 +41,7 @@ def run():
             ui_pockets.append(window.Pocket(pocket))
 
     window.init(width, height, ui_pockets)
-    world = physics.World(width, height, pockets)
+    world = physics.World(width, height, pockets, friction)
     if BALLS_KEY in data:
         for ball in data[BALLS_KEY]:
             pos = ball[POS_KEY]

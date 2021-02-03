@@ -53,7 +53,7 @@ class Vector:
 
 
 class World:
-    def __init__(self, width, height, pockets):
+    def __init__(self, width, height, pockets, friction):
         self.balls = []
         self.width = width
         self.height = height
@@ -62,6 +62,7 @@ class World:
         self.left_pockets = []
         self.right_pockets = []
         self.insert_pockets(pockets)
+        self.friction = friction
 
     def insert_pockets(self, pockets):
         for pocket in pockets:
@@ -101,6 +102,9 @@ class World:
             self.handle_collision(collision[0], collision[1])
         for ball in self.balls:
             ball.pos += ball.vel / tps
+            ball.vel -= ball.vel.almost_norm() * min(self.friction / tps, ball.vel.length())
+            if ball.vel.length() < 0.0001:
+                ball.vel = Vector(0, 0)
         self.balls = list(filter(lambda b: not b.removed, self.balls))
 
     def collide_border(self, ball):
