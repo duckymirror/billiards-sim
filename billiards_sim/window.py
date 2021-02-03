@@ -49,7 +49,7 @@ class Ball(pygame.sprite.Sprite):
         self.color = color
 
     def draw(self, surface):
-        pygame.draw.circle(surface, self.color, (int(self.ball.pos.x * SCALE), int(self.ball.pos.y * SCALE)), int(self.ball.radius * SCALE))
+        pygame.draw.circle(surface, self.color, (int(self.ball.pos.x * SCALE) + BORDER_THICKNESS, int(self.ball.pos.y * SCALE) + BORDER_THICKNESS), int(self.ball.radius * SCALE))
 
 def add_ball(ball):
     global balls
