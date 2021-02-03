@@ -1,19 +1,38 @@
+import yaml
+import sys
 from billiards_sim import physics
 from billiards_sim import window
 
-WIDTH = 1270
-HEIGHT = 2540
-BALL_RADIUS = 57.2 / 2
-FPS = 60
-TPF = 5
+WIDTH_KEY = 'width'
+HEIGHT_KEY = 'height'
+BALL_RADIUS_KEY = 'radius'
+FPS_KEY = 'fps'
+TPF_KEY = 'tpf'
+BALLS_KEY = 'balls'
+POS_KEY = 'pos'
+VEL_KEY = 'vel'
+COLOR_KEY = 'col'
 
 def run():
-    window.init(WIDTH, HEIGHT)
-    world = physics.World(WIDTH, HEIGHT)
-    ball = physics.Ball(BALL_RADIUS, physics.Point(300, 300), physics.Vector(-1000, -1000))
-    world.add_ball(ball)
-    window.add_ball(window.Ball(ball, (0xFC, 0xEA, 0x23)))
-    ball = physics.Ball(BALL_RADIUS, physics.Point(600, 600), physics.Vector(-510, -500))
-    world.add_ball(ball)
-    window.add_ball(window.Ball(ball, (0xE4, 0x66, 0x15)))
-    window.loop(world, FPS, TPF)
+    yaml_path = sys.argv[1]
+    data = None
+    with open(yaml_path) as f:
+        data = yaml.load(f, Loader=yaml.Loader)
+        data = {} if data is None else data
+    ball_radius = data.get(BALL_RADIUS_KEY, 57.2 / 2)
+    fps = data.get(FPS_KEY, 60)
+    tpf = data.get(TPF_KEY, 5)
+    width = data.get(WIDTH_KEY, 1270)
+    height = data.get(HEIGHT_KEY, 2540)
+
+    window.init(width, height)
+    world = physics.World(width, height)
+    if BALLS_KEY in data:
+        for ball in data[BALLS_KEY]:
+            pos = ball[POS_KEY]
+            vel = ball[VEL_KEY]
+            color = ball[COLOR_KEY]
+            ph_ball = physics.Ball(ball_radius, physics.Point(pos[0], pos[1]), physics.Vector(vel[0], vel[1]))
+            world.add_ball(ph_ball)
+            window.add_ball(window.Ball(ph_ball, (color[0], color[1], color[2])))
+    window.loop(world, fps, tpf)
