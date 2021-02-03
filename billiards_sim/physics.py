@@ -61,14 +61,14 @@ class World:
     def add_ball(self, ball):
         self.balls.append(ball)
 
-    def tick(self):
+    def tick(self, tps):
         for ball in self.balls:
             self.collide_border(ball)
         collisions = self.get_ball_collisions()
         for collision in collisions:
             self.handle_collision(collision[0], collision[1])
         for ball in self.balls:
-            ball.pos += ball.vel
+            ball.pos += ball.vel / tps
 
     def collide_border(self, ball):
         # Left / right border

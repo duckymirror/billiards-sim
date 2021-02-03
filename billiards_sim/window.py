@@ -5,7 +5,6 @@ pygame.init()
 
 balls = pygame.sprite.Group()
 
-FPS = 30
 FramesPerSec = pygame.time.Clock()
 
 WHITE = (255, 255, 255)
@@ -55,7 +54,7 @@ def add_ball(ball):
     global balls
     balls.add(ball)
 
-def loop(world):
+def loop(world, fps, tpf):
     table = Table()
     while True:
         for event in pygame.event.get():
@@ -63,11 +62,12 @@ def loop(world):
                 pygame.quit()
                 sys.exit()
         
-        world.tick()
+        for _ in range(tpf):
+            world.tick(fps * tpf)
 
         DISPLAYSURF.fill(BACKGROUND)
         table.draw(DISPLAYSURF)
         for ball in balls:
             ball.draw(DISPLAYSURF)
         pygame.display.update()
-        FramesPerSec.tick(FPS)
+        FramesPerSec.tick(fps)
