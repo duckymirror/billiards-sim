@@ -1,7 +1,14 @@
+# Frames per second
 fps: 60
+# Simulation ticks per frame
+tpf: 10
+# Table width (mm)
 width: 1270
+# Table length (mm)
 height: 2540
+# Ball radius (mm)
 radius: 28.6
+# Friction (mm/s²)
 friction: 100
 pockets:
   - side: top_left
@@ -19,10 +26,10 @@ pockets:
     diameter: 140
     pos: 1270
 balls:
-  - name: "ball_1"
-    pos: [300, 300]
-    vel: [0, 00]
-    col: [0xfc, 0xea, 0x23]
+  - name: "ball_1"          # Unique identifier
+    pos: [300, 300]         # Initial ball position ([x, y])
+    vel: [0, 00]            # Initial ball velocity ([x, y])
+    col: [0xfc, 0xea, 0x23] # Ball colour in RGB format ([r, g, b])
   - name: "ball_2"
     pos: [600, 600]
     vel: [0, 0]
@@ -32,13 +39,13 @@ balls:
     vel: [0, 0]
     col: [0, 0, 0]
 actions:
-  - ball: "ball_1"
-    bump:
-      ball: "ball_3"
-      dest: [1270, 1270]
-      vel: 2000
+  - ball: "ball_1"          # Name of the ball to be played
+    bump:                   # Push a ball into a direction
+      ball: "ball_3"        # Name of the ball to be pushed
+      dest: [1270, 2540]    # Point the pushed ball should move towards
+      vel: 2000             # Initial velocity of the played ball
   - ball: "ball_2"
     bump:
       ball: "ball_1"
-      dest: [1250, 0]
+      dest: [0, 2540]
       vel: 800

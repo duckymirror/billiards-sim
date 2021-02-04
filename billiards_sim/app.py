@@ -34,7 +34,7 @@ def run():
         data = {} if data is None else data
     ball_radius = data.get(BALL_RADIUS_KEY, 57.2 / 2)
     fps = data.get(FPS_KEY, 60)
-    tpf = data.get(TPF_KEY, 5)
+    tpf = data.get(TPF_KEY, 10)
     width = data.get(WIDTH_KEY, 1270)
     height = data.get(HEIGHT_KEY, 2540)
 
