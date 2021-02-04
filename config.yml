@@ -40,12 +40,12 @@ balls:
     col: [0, 0, 0]
 actions:
   - ball: "ball_1"          # Name of the ball to be played
-    bump:                   # Push a ball into a direction
+    push:                   # Push a ball into a direction
       ball: "ball_3"        # Name of the ball to be pushed
       dest: [1270, 2540]    # Point the pushed ball should move towards
       vel: 2000             # Initial velocity of the played ball
   - ball: "ball_2"
-    bump:
+    push:
       ball: "ball_1"
       dest: [0, 2540]
       vel: 800

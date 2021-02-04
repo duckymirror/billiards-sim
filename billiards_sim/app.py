@@ -21,10 +21,10 @@ FRICTION_KEY = 'friction'
 ACTIONS_KEY = 'actions'
 ACTIONS_BALL_KEY = 'ball'
 ACTIONS_VEL_KEY = 'vel'
-ACTIONS_BUMP_KEY = 'bump'
-ACTIONS_BUMP_BALL_KEY = 'ball'
-ACTIONS_BUMP_DEST_KEY = 'dest'
-ACTIONS_BUMP_VEL_KEY = 'vel'
+ACTIONS_PUSH_KEY = 'push'
+ACTIONS_PUSH_BALL_KEY = 'ball'
+ACTIONS_PUSH_DEST_KEY = 'dest'
+ACTIONS_PUSH_VEL_KEY = 'vel'
 
 def run():
     yaml_path = sys.argv[1]
@@ -54,13 +54,13 @@ def run():
             ball = str(action[ACTIONS_BALL_KEY])
             vel = action.get(ACTIONS_VEL_KEY, None)
             vel = None if vel is None else physics.Vector(vel[0], vel[1])
-            bump = action.get(ACTIONS_BUMP_KEY, None)
-            if bump is not None:
-                bumped_ball = bump[ACTIONS_BUMP_BALL_KEY]
-                dest = bump[ACTIONS_BUMP_DEST_KEY]
-                abs_vel = bump[ACTIONS_BUMP_VEL_KEY]
-                bump = physics.BumpActionData(bumped_ball, physics.Point(dest[0], dest[1]), abs_vel)
-            actions.append(physics.Action(ball, vel, bump))
+            push = action.get(ACTIONS_PUSH_KEY, None)
+            if push is not None:
+                pushed_ball = push[ACTIONS_PUSH_BALL_KEY]
+                dest = push[ACTIONS_PUSH_DEST_KEY]
+                abs_vel = push[ACTIONS_PUSH_VEL_KEY]
+                push = physics.PushActionData(pushed_ball, physics.Point(dest[0], dest[1]), abs_vel)
+            actions.append(physics.Action(ball, vel, push))
 
     window.init(width, height, ui_pockets)
     world = physics.World(width, height, pockets, friction, actions)

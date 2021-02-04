@@ -177,12 +177,12 @@ class World:
         if action.vel is not None:
             ball.vel = action.vel
         else:
-            target_ball = self.get_ball(action.bump.ball)
-            desired_dir = (target_ball.pos - action.bump.dest).norm()
+            target_ball = self.get_ball(action.push.ball)
+            desired_dir = (target_ball.pos - action.push.dest).norm()
             total_radius = ball.radius + target_ball.radius
             target_point = target_ball.pos + desired_dir * total_radius
             dir = (target_point - ball.pos).norm()
-            ball.vel = dir * action.bump.vel
+            ball.vel = dir * action.push.vel
 
     def get_ball(self, name):
         try:
@@ -214,13 +214,13 @@ class Pocket:
         self.right = side.endswith('right')
 
 class Action:
-    def __init__(self, ball, vel=None, bump=None):
-        assert(vel is not None or bump is not None)
+    def __init__(self, ball, vel=None, push=None):
+        assert(vel is not None or push is not None)
         self.ball = ball
         self.vel = vel
-        self.bump = bump
+        self.push = push
 
-class BumpActionData:
+class PushActionData:
     def __init__(self, ball, dest, vel):
         self.ball = ball
         self.dest = dest
