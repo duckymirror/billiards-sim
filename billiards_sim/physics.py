@@ -1,4 +1,6 @@
 import math
+import random
+import sys
 
 
 class Point:
@@ -181,8 +183,72 @@ class World:
             desired_dir = (target_ball.pos - action.push.dest).norm()
             total_radius = ball.radius + target_ball.radius
             target_point = target_ball.pos + desired_dir * total_radius
-            dir = (target_point - ball.pos).norm()
-            ball.vel = dir * action.push.vel
+            if action.push.rail == RAIL_AUTO:
+                valid_paths = []
+                for rail in [RAIL_TOP, RAIL_BOTTOM, RAIL_LEFT, RAIL_RIGHT, None]:
+                    path = self.calculate_path(ball, target_ball, target_point, rail, action.push.vel)
+                    if path[1]:
+                        valid_paths.append(path)
+                result = max(valid_paths, key=lambda p: p[2])
+            else:
+                result = self.calculate_path(ball, target_ball, target_point, action.push.rail, action.push.vel)
+            if not result[1]:
+                print("This shot isn't going to hit the ball correctly!", file=sys.stderr)
+            ball.vel = result[0] * action.push.vel
+
+    def calculate_path(self, ball, target_ball, target_point, rail, vel):
+            if rail == RAIL_TOP:
+                curr_pos = Point(ball.pos.x, -ball.pos.y + 2 * ball.radius)
+            elif rail == RAIL_BOTTOM:
+                curr_pos = Point(ball.pos.x, 2 * self.height - ball.pos.y - 2 * ball.radius)
+            elif rail == RAIL_LEFT:
+                curr_pos = Point(-ball.pos.x + 2 * ball.radius, ball.pos.y)
+            elif rail == RAIL_RIGHT:
+                curr_pos = Point(2 * self.width - ball.pos.x - 2 * ball.radius, ball.pos.y)
+            else:
+                curr_pos = ball.pos
+
+            dir = (target_point - curr_pos).norm()
+
+            if rail == RAIL_TOP or rail == RAIL_BOTTOM:
+                final_dir = Vector(dir.x, -dir.y)
+            elif rail == RAIL_LEFT or rail == RAIL_RIGHT:
+                final_dir = Vector(-dir.x, dir.y)
+            else:
+                final_dir = dir
+
+            invalid = False
+            if rail == RAIL_TOP:
+                if final_dir.y != 0:
+                    m = final_dir.x / final_dir.y
+                    collision_x = m * (ball.radius - ball.pos.y) + ball.pos.x
+                    invalid |= 0 <= collision_x < self.width and any(filter(lambda p: p[0] < collision_x < p[1], self.top_pockets))
+            elif rail == RAIL_BOTTOM:
+                if final_dir.y != 0:
+                    m = final_dir.x / final_dir.y
+                    collision_x = m * (self.height - ball.radius - ball.pos.y) + ball.pos.x
+                    invalid |= 0 <= collision_x < self.width and any(filter(lambda p: p[0] < collision_x < p[1], self.bottom_pockets))
+            elif rail == RAIL_LEFT:
+                if final_dir.x != 0:
+                    m = final_dir.y / final_dir.x
+                    collision_y = m * (ball.radius - ball.pos.x) + ball.pos.y
+                    invalid |= 0 <= collision_y < self.height and any(filter(lambda p: p[0] < collision_y < p[1], self.left_pockets))
+            elif rail == RAIL_RIGHT:
+                if final_dir.x != 0:
+                    m = final_dir.y / final_dir.x
+                    collision_y = m * (self.width - ball.radius - ball.pos.x) + ball.pos.y
+                    invalid |= 0 <= collision_y < self.height and any(filter(lambda p: p[0] < collision_y < p[1], self.right_pockets))
+
+            score = self.score_path(curr_pos, target_point, target_ball.pos, vel)
+            if invalid or dir.dot(target_point - target_ball.pos) > 0:
+                return (final_dir, False, score)
+            else:
+                return (final_dir, True, score)
+
+    def score_path(self, start_point, target_point, target_ball_pos, vel):
+        dist = (target_point - start_point).length()
+        collision_vel = math.sqrt(max(2 * -self.friction * dist + vel * vel, 0))
+        return (target_ball_pos - target_point).norm().dot((target_point - start_point).norm()) * collision_vel
 
     def get_ball(self, name):
         try:
@@ -220,8 +286,15 @@ class Action:
         self.vel = vel
         self.push = push
 
+RAIL_AUTO = "auto"
+RAIL_TOP = "top"
+RAIL_BOTTOM = "bottom"
+RAIL_LEFT = "left"
+RAIL_RIGHT = "right"
+
 class PushActionData:
-    def __init__(self, ball, dest, vel):
+    def __init__(self, ball, dest, vel, rail = None):
         self.ball = ball
         self.dest = dest
         self.vel = vel
+        self.rail = rail

@@ -31,7 +31,7 @@ balls:
     vel: [0, 00]            # Initial ball velocity ([x, y])
     col: [0xfc, 0xea, 0x23] # Ball colour in RGB format ([r, g, b])
   - name: "ball_2"
-    pos: [600, 600]
+    pos: [600, 800]
     vel: [0, 0]
     col: [0xe4, 0x66, 0x15]
   - name: "ball_3"
@@ -42,10 +42,12 @@ actions:
   - ball: "ball_1"          # Name of the ball to be played
     push:                   # Push a ball into a direction
       ball: "ball_3"        # Name of the ball to be pushed
-      dest: [1270, 2540]    # Point the pushed ball should move towards
-      vel: 2000             # Initial velocity of the played ball
+      dest: [1270, 2540]       # Point the pushed ball should move towards
+      vel: 1000             # Initial velocity of the played ball
+      rail: auto
   - ball: "ball_2"
     push:
       ball: "ball_1"
-      dest: [0, 2540]
-      vel: 800
+      dest: [0, 1270]
+      vel: 2000
+      rail: auto

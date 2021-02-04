@@ -25,6 +25,7 @@ ACTIONS_PUSH_KEY = 'push'
 ACTIONS_PUSH_BALL_KEY = 'ball'
 ACTIONS_PUSH_DEST_KEY = 'dest'
 ACTIONS_PUSH_VEL_KEY = 'vel'
+ACTIONS_PUSH_RAIL_KEY = 'rail'
 
 def run():
     yaml_path = sys.argv[1]
@@ -59,7 +60,8 @@ def run():
                 pushed_ball = push[ACTIONS_PUSH_BALL_KEY]
                 dest = push[ACTIONS_PUSH_DEST_KEY]
                 abs_vel = push[ACTIONS_PUSH_VEL_KEY]
-                push = physics.PushActionData(pushed_ball, physics.Point(dest[0], dest[1]), abs_vel)
+                rail = push.get(ACTIONS_PUSH_RAIL_KEY, None)
+                push = physics.PushActionData(pushed_ball, physics.Point(dest[0], dest[1]), abs_vel, rail)
             actions.append(physics.Action(ball, vel, push))
 
     window.init(width, height, ui_pockets)
