@@ -135,7 +135,9 @@ def handle_keydown(event):
         global paused
         paused = not paused
 
-def loop(world, fps, tpf):
+def loop(world, fps, tpf, start_paused):
+    global paused
+    paused = start_paused if start_paused is not None else False
     table = Table()
     while True:
         for event in pygame.event.get():

@@ -9,6 +9,7 @@ BALL_RADIUS_KEY = 'radius'
 FPS_KEY = 'fps'
 TPF_KEY = 'tpf'
 INVERT_Y_KEY = 'invert_y'
+PAUSED_KEY = 'paused'
 BALLS_KEY = 'balls'
 POS_KEY = 'pos'
 VEL_KEY = 'vel'
@@ -40,6 +41,7 @@ def run():
     width = data.get(WIDTH_KEY, 1270)
     height = data.get(HEIGHT_KEY, 2540)
     invert_y = data.get(INVERT_Y_KEY, True)
+    paused = data.get(PAUSED_KEY)
 
     friction = data.get(FRICTION_KEY, 0)
 
@@ -88,4 +90,4 @@ def run():
             ph_ball = physics.Ball(ball_radius, physics.Point(pos[0], pos[1]), physics.Vector(vel[0], vel[1]), name)
             world.add_ball(ph_ball)
             window.add_ball(window.Ball(ph_ball, (color[0], color[1], color[2])))
-    window.loop(world, fps, tpf)
+    window.loop(world, fps, tpf, paused)
