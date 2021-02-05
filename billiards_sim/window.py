@@ -19,6 +19,7 @@ BORDER_THICKNESS = 10
 DISPLAYSURF = None
 
 table_size = (None, None)
+paused = False
 
 def init(width, height, pockets):
     global table_size
@@ -129,16 +130,24 @@ def add_ball(ball):
     global balls
     balls.add(ball)
 
+def handle_keydown(event):
+    if event.key == pygame.K_SPACE:
+        global paused
+        paused = not paused
+
 def loop(world, fps, tpf):
     table = Table()
     while True:
         for event in pygame.event.get():
+            if event.type == KEYDOWN:
+                handle_keydown(event)
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
         
-        for _ in range(tpf):
-            world.tick(fps * tpf)
+        if not paused:
+            for _ in range(tpf):
+                world.tick(fps * tpf)
 
         DISPLAYSURF.fill(BACKGROUND)
         table.draw(DISPLAYSURF)
