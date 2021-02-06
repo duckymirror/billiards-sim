@@ -1,3 +1,4 @@
+import math
 import pygame, sys
 from pygame.locals import *
 
@@ -118,13 +119,22 @@ class Pocket(pygame.sprite.Sprite):
             pygame.draw.rect(surface, POCKET_COLOR, (x, y, width, height))
 
 class Ball(pygame.sprite.Sprite):
-    def __init__(self, ball, color):
+    def __init__(self, ball, color, stripe):
         super().__init__()
         self.ball = ball
-        self.color = color
+        self.surf = pygame.Surface((2 * ball.radius * SCALE, 2 * ball.radius * SCALE), flags=pygame.SRCALPHA)
+        if stripe:
+            bg_color = WHITE
+        else:
+            bg_color = color
+        pygame.draw.circle(self.surf, bg_color, (round(ball.radius * SCALE), round(ball.radius * SCALE)), int(ball.radius * SCALE))
+        if stripe:
+            stripe_surf = pygame.Surface((math.floor(ball.radius * SCALE), math.ceil(2 * ball.radius * SCALE)), flags=pygame.SRCALPHA)
+            pygame.draw.circle(stripe_surf, color, (round(.5 * ball.radius * SCALE), round(ball.radius * SCALE)), int(ball.radius * SCALE))
+            self.surf.blit(stripe_surf, (round(.5 * ball.radius * SCALE), 0))
 
     def draw(self, surface):
-        pygame.draw.circle(surface, self.color, (int(self.ball.pos.x * SCALE) + BORDER_THICKNESS, int(self.ball.pos.y * SCALE) + BORDER_THICKNESS), int(self.ball.radius * SCALE))
+        surface.blit(self.surf, (self.ball.pos.x * SCALE - self.ball.radius * SCALE + BORDER_THICKNESS, self.ball.pos.y * SCALE - self.ball.radius * SCALE + BORDER_THICKNESS))
 
 def add_ball(ball):
     global balls

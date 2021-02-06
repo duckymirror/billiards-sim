@@ -15,6 +15,7 @@ POS_KEY = 'pos'
 VEL_KEY = 'vel'
 COLOR_KEY = 'col'
 BALL_NAME_KEY = 'name'
+BALL_STRIPE_KEY = 'stripe'
 POCKETS_KEY = 'pockets'
 POCKET_SIDE_KEY = 'side'
 POCKET_POS_KEY = 'pos'
@@ -87,7 +88,8 @@ def run():
                 vel[1] = -vel[1]
             color = ball[COLOR_KEY]
             name = ball.get(BALL_NAME_KEY, None)
+            stripe = ball.get(BALL_STRIPE_KEY, False)
             ph_ball = physics.Ball(ball_radius, physics.Point(pos[0], pos[1]), physics.Vector(vel[0], vel[1]), name)
             world.add_ball(ph_ball)
-            window.add_ball(window.Ball(ph_ball, (color[0], color[1], color[2])))
+            window.add_ball(window.Ball(ph_ball, (color[0], color[1], color[2]), stripe))
     window.loop(world, fps, tpf, paused)

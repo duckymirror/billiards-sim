@@ -34,6 +34,7 @@ balls:
     pos: [600, 800]
     vel: [0, 0]
     col: [0xe4, 0x66, 0x15]
+    stripe: true
   - name: "ball_3"
     pos: [600, 1300]
     vel: [0, 0]
