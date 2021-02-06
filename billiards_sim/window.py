@@ -27,7 +27,6 @@ def init(width, height, pockets):
     table_size = (width, height)
     global DISPLAYSURF
     DISPLAYSURF = pygame.display.set_mode((int(width * SCALE + 2 * BORDER_THICKNESS), int(height * SCALE + 2 * BORDER_THICKNESS)))
-    DISPLAYSURF.fill(BACKGROUND)
     pygame.display.set_caption("Billiards")
     global all_pockets
     all_pockets = pockets
@@ -122,16 +121,17 @@ class Ball(pygame.sprite.Sprite):
     def __init__(self, ball, color, stripe):
         super().__init__()
         self.ball = ball
-        self.surf = pygame.Surface((2 * ball.radius * SCALE, 2 * ball.radius * SCALE), flags=pygame.SRCALPHA)
+        draw_radius = round(ball.radius * SCALE)
+        self.surf = pygame.Surface((2 * draw_radius, 2 * draw_radius), flags=pygame.SRCALPHA)
         if stripe:
             bg_color = WHITE
         else:
             bg_color = color
-        pygame.draw.circle(self.surf, bg_color, (round(ball.radius * SCALE), round(ball.radius * SCALE)), int(ball.radius * SCALE))
+        pygame.draw.circle(self.surf, bg_color, (draw_radius, draw_radius), draw_radius)
         if stripe:
-            stripe_surf = pygame.Surface((math.floor(ball.radius * SCALE), math.ceil(2 * ball.radius * SCALE)), flags=pygame.SRCALPHA)
-            pygame.draw.circle(stripe_surf, color, (round(.5 * ball.radius * SCALE), round(ball.radius * SCALE)), int(ball.radius * SCALE))
-            self.surf.blit(stripe_surf, (round(.5 * ball.radius * SCALE), 0))
+            stripe_surf = pygame.Surface((draw_radius, 2 * draw_radius), flags=pygame.SRCALPHA)
+            pygame.draw.circle(stripe_surf, color, (round(.5 * ball.radius * SCALE), draw_radius), draw_radius)
+            self.surf.blit(stripe_surf, (.5 * draw_radius, 0))
 
     def draw(self, surface):
         surface.blit(self.surf, (self.ball.pos.x * SCALE - self.ball.radius * SCALE + BORDER_THICKNESS, self.ball.pos.y * SCALE - self.ball.radius * SCALE + BORDER_THICKNESS))
@@ -161,7 +161,6 @@ def loop(world, fps, tpf, start_paused):
             for _ in range(tpf):
                 world.tick(fps * tpf)
 
-        DISPLAYSURF.fill(BACKGROUND)
         table.draw(DISPLAYSURF)
         global balls
         balls = list(filter(lambda b: not b.ball.removed, balls))
