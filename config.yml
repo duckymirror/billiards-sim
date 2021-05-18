@@ -52,3 +52,5 @@ actions:
       dest: [0, 1270]
       vel: 2000
       rail: auto
+  - ball: "ball_2"
+    vel: [-340, -800]
