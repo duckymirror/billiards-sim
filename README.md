@@ -1,7 +1,7 @@
 # billiards-sim
  A quick and unrealistic simulation of a billiard table
 ## The configuration file
-The scenario that should be simulated can be configured in a YAML file. You can specify this file as `python -m billiards_sim config.yaml`. An example can be found in [`config.yml`](config.yml).
+The scenario that should be simulated can be configured in a YAML file. You can specify this file as `python -m billiards_sim config.yaml`. An example can be found in [`example_config.yaml`](example_config.yaml).
 
 The following options exist:
 
