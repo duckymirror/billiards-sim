@@ -1,0 +1,8 @@
+name: billiards_sim
+channels:
+  - defaults
+  - CogSci
+dependencies:
+  - python=3.5
+  - pyyaml=3
+  - pygame=1.9
